@@ -10,7 +10,10 @@ MERGE (p:Party { id: line.id })
     ON CREATE SET
         p.first_name =  line.first_name,
         p.last_name = line.last_name,
-        p.occupation = line.occupation
+        p.occupation = line.occupation,
+        p.fraud_followup = false,
+        p.fraud_confirmed = false,
+        p.case_id = null
 
 MERGE (phone:Phone { number: line.phone })
 
