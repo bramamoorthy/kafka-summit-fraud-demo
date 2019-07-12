@@ -4,25 +4,25 @@
  * of fraud, or related to fraud accounts.
  */
 
-/* Find some crooks */
 MATCH (crook:Party)-[:SSN]->(fraudSSN:SSN)
 WHERE crook.fraud_confirmed
-WITH fraudSSN
-/* Select some victims */
+WITH collect(fraudSSN) as fraudSSNs
+
 MATCH (innocent:Party)-[:SSN]->(innocentSSN:SSN)
-    WHERE innocent.id % 71 = 1 AND /* This is just here to limit cardinality */
+    WHERE 
         NOT innocent.fraud_followup AND 
         NOT innocent.fraud_confirmed AND
         ( (innocent)-[:ACCOUNT]->(:Account) OR
           (innocent)-[:CREDIT_CARD]->(:CreditCard) )
 
-/* Limit the number of victims */
-WITH apoc.coll.zip(collect(fraudSSN), collect({ innocent: innocent, innocentSSN: innocentSSN })) as together
-UNWIND together as pair
-WITH pair[0] as fraudSSN, pair[1].innocent as innocent, pair[1].innocentSSN as innocentSSN
-WHERE rand() > 0.5
+WITH distinct(innocent) as innocent, fraudSSNs
+ORDER BY innocent.id DESC LIMIT 50
 
-DETACH DELETE innocentSSN
-CREATE (innocent)-[:SSN]->(fraudSSN)
+WITH fraudSSNs, collect(innocent) as innocents
 
-RETURN count(fraudSSN);
+UNWIND apoc.coll.zip(fraudSSNs, innocents) as pair
+WITH pair[0] as fraudSSN, pair[1] as innocent
+
+/* A this point we have a pair to match up */
+CREATE (innocent)-[r:SSN]->(fraudSSN)
+RETURN count(r);
