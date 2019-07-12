@@ -6,7 +6,7 @@ USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS
 FROM 'https://raw.githubusercontent.com/moxious/kafka-summit-fraud-demo/master/data/credit_cards.csv' AS line
 
-MERGE (p:Party { id: line.party_id })
+MERGE (p:Party { id: toInt(line.party_id) })
 
 MERGE (cc:CreditCard {
     id: line.id

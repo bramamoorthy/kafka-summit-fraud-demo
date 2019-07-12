@@ -6,7 +6,7 @@ USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS
 FROM 'https://raw.githubusercontent.com/moxious/kafka-summit-fraud-demo/master/data/parties.csv' AS line
 
-MERGE (p:Party { id: line.id })
+MERGE (p:Party { id: toInt(line.id) })
     ON CREATE SET
         p.first_name =  line.first_name,
         p.last_name = line.last_name,
