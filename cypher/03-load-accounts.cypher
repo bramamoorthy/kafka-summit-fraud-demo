@@ -11,9 +11,9 @@ MERGE (p:Party { id: line.party_id })
 MERGE (a:Account {
     id: line.id
 }) ON CREATE SET 
-    a.type = type,
-    a.iban = iban,
-    a.currency = currency
+    a.type = line.type,
+    a.iban = line.iban,
+    a.currency = line.currency
 
 MERGE (p)-[:ACCOUNT]->(a)
 RETURN count(a);

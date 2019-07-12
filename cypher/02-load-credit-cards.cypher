@@ -17,5 +17,5 @@ MERGE (cc:CreditCard {
     cc.expiry = line.expiry,
     cc.currency = line.currency
 
-MERGE (p)-[:CREDIT_CARD]->(cc);
+MERGE (p)-[:CREDIT_CARD]->(cc)
 RETURN count(cc);

@@ -8,7 +8,7 @@ FROM 'https://raw.githubusercontent.com/moxious/kafka-summit-fraud-demo/master/d
 
 MERGE (p:Party { id: line.party_id })
 
-MERGE (c:Cookie { id: line.id })
+MERGE (c:Cookie { id: line.cookie_id })
     ON CREATE SET 
         c.cookie_id = line.cookie_id,
         c.ip = line.ip,
