@@ -1,0 +1,14 @@
+graph "food"
+
+create (fruit:Food { id: 1, name: "Fruit" }) 
+create (orange:Food { id: 2, name: "Orange" }) 
+create (apple:Food { id: 3, name: "Apple" }) 
+create (rd:Food { id: 4, name: "Red Delicious" }) 
+create (orange)-[:parent]->(fruit) 
+create (apple)-[:parent]->(fruit) 
+create (rd)-[:parent]->(apple) 
+return *;
+
+
+
+

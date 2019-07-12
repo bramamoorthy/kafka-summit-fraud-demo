@@ -1,0 +1,11 @@
+
+table "food"
+
+id  name            parent
+1   Fruit           null
+2   Orange          1
+3   Apple           1
+4   Red Delicious   3
+
+
+
