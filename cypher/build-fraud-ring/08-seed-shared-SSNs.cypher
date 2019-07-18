@@ -5,11 +5,14 @@
  */
 
 MATCH (crook:Party)-[:SSN]->(fraudSSN:SSN)
-WHERE crook.fraud_confirmed
+WHERE crook.fraud_confirmed and crook.flag is not null
+WITH crook, fraudSSN
+SET fraudSSN.flag = crook.flag
 WITH collect(fraudSSN) as fraudSSNs
 
 MATCH (innocent:Party)-[:SSN]->(innocentSSN:SSN)
     WHERE 
+        innocent.flag is null AND
         NOT innocent.fraud_followup AND 
         NOT innocent.fraud_confirmed AND
         ( (innocent)-[:ACCOUNT]->(:Account) OR
@@ -25,4 +28,5 @@ WITH pair[0] as fraudSSN, pair[1] as innocent
 
 /* A this point we have a pair to match up */
 CREATE (innocent)-[r:SSN]->(fraudSSN)
+SET innocent.flag = fraudSSN.flag + 1
 RETURN count(r);

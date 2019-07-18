@@ -1,6 +1,7 @@
 /* Find some crooks */
-MATCH (crook:Party)-[:COOKIE]->(crookie:Cookie) 
-WHERE crook.fraud_confirmed
+MATCH (crook:Party)-[:COOKIE]->(crookie:Cookie)
+WHERE crook.fraud_confirmed and crookie.flag is null
+SET crookie.flag = crook.flag
 WITH crookie
 /* Select some victims */
 MATCH (innocent:Party) 
@@ -19,6 +20,7 @@ WHERE rand() > 0.5
 CREATE (innocent)-[:COOKIE]->(crookie)
 CREATE (crook)-[:MULTIPARTY_COOKIE]->(crookie)
 CREATE (innocent)-[:MULTIPARTY_COOKIE]->(crookie)
+SET innocent.flag = crookie.flag + 1
 
 // Don't link every crook to every 
 RETURN count(crookie);

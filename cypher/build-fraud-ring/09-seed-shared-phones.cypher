@@ -9,6 +9,7 @@ WITH collect(suspicious) as suspiciousParties
 
 MATCH (innocent:Party)-[:PHONE]->(innocentPhone:Phone)
     WHERE 
+        innocent.flag is null AND
         NOT innocent.fraud_followup AND 
         NOT innocent.fraud_confirmed AND
         ( (innocent)-[:ACCOUNT]->(:Account) OR
@@ -30,15 +31,11 @@ WITH
 
 CREATE (sharedPhone:Phone {
     id: apoc.util.md5([number]),
-    number: "(" + areaCode + ") " + exchange + "-" + number
+    number: "(" + areaCode + ") " + exchange + "-" + number,
+    flag: suspicious.flag
 })
 CREATE (suspicious)-[:PHONE]->(sharedPhone)
 CREATE (innocent)-[:PHONE]->(sharedPhone)
+SET innocent.flag = suspicious.flag + 1
 RETURN count(sharedPhone);
 
-
-WITH 
-    substring(toString(toInt(floor(100000 + rand() * 900000))), 0, 3) as exchange,
-    substring(toString(toInt(floor(100000 + rand() * 900000))), 0, 3) as areaCode,
-    substring(toString(toInt(floor(100000 + rand() * 900000))), 0, 4) as number
-RETURN "(" + areaCode + ") " + exchange + "-" + number;

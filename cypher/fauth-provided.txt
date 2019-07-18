@@ -1,0 +1,66 @@
+//Identify Multiparty nodes/multicookie relationships (narrow the amount of data that want to analyze):
+CREATE INDEX ON :Cookie(numberParties)
+CALL apoc.periodic.iterate(
+"MATCH (c:Cookie) WHERE size(()-[:Pty_Cookie]->(c))>1 RETURN c",
+"with c, size(()-[:Pty_Cookie]->(c)) as totalSize set c.numberParties=totalSize", {batchSize:10000, parallel:true})
+CREATE INDEX ON :Party(numberMultiCookies)
+CALL apoc.periodic.iterate("MATCH (p:Party)-[:Pty_Cookie]->(c:Cookie) where exists (c.numberParties) return p",
+"match (p)-[r:Pty_Cookie]->(c:Cookie) where exists (c.numberParties) with p,count(r) as numRels set p.numberMultiCookies=numRels", 
+{batchSize:10000, parallel:false})
+Step 7: //Create communities using 40 hops from Negative list:
+CALL apoc.periodic.iterate("
+    MATCH (p1:Party) 
+    WHERE p1.Negative_Flag= '1' and 
+    EXISTS (p1.numberMultiCookies) and not exists(p1.fraudRingID) return p1",
+    "
+    WITH p1 
+    CALL apoc.path.subgraphNodes(p1, {maxLevel:40, relationshipFilter:'MULTIPARTY_COOKIE'}) 
+    YIELD node with node,p1 set node.fraudRingID=p1.Pty_id_hashed
+    ", { batchSize:200, parallel:false })
+
+// or 
+MATCH (p1:Party) where p1.Negative_Flag= '1' 
+and exists (p1.numberMultiCookies)  
+and not exists(p1.fraudRingID) 
+with p1 limit 100 
+call  apoc.path.subgraphNodes(p1, {maxLevel:40, relationshipFilter:'MULTIPARTY_COOKIE'}) 
+yield node with node,p1,count(node) as numNodes set node.fraudRingID=p1.Pty_id_hashed;
+
+
+CREATE INDEX ON :AlgorithmNode(louvainCommunity);
+
+CALL apoc.periodic.iterate("MATCH (p:Party) where exists (p.numberMultiCookies) return p",
+"with p set p:AlgorithmNode", {batchSize:10000, parallel:false});
+
+CALL apoc.periodic.iterate("MATCH (c:Cookie) where exists (c.numberParties) return c",
+"with c set c:AlgorithmNode", {batchSize:10000, parallel:true});
+
+CALL apoc.periodic.iterate("MATCH (p:Party) where exists (p.numberMultiCookies) return p",
+"with p match (p)-[:MULTIPARTY_COOKIE]->(c) with p,c CREATE (p)-[:AlgorithmRelationship {strength:1.0}]->(c)", 
+{batchSize:2500, parallel:false});
+
+Step 11:  Louvain
+//Create communities using 1 relationship type in Louvain:
+CALL apoc.periodic.iterate("CALL algo.louvain.stream('AlgorithmNode', 'AlgorithmRelationship',{concurrency:8,graph:'heavy'}) YIELD nodeId, community", 
+"match (n) where id(n) = nodeId set n.louvainCommunity = community", 
+{batchSize:2000, parallel:false});
+
+Step 12:  Weighted Louvain
+
+//Create communities using 1 relationship type in Louvain:
+CALL apoc.periodic.iterate("CALL algo.louvain.stream('AlgorithmNode', 'AlgorithmRelationship',{concurrency:8,graph:'heavy'}) YIELD nodeId, community", 
+"match (n) where id(n) = nodeId set n.louvainCommunity = community", 
+{batchSize:2000, parallel:false});
+
+//Pick top communities and do one hope out:
+//start looking into one hops from a phone connected to multiple parties
+MATCH (p:Phone) where size((p)<-[:PTY_Phone]-()) > 2 with p match (p)<-[:PTY_Phone]-(pa:Party) where (pa)-[:MULTIPARTY_COOKIE]->(:Cookie) return p limit 20;
+//able to do one hope out with this:
+MATCH (p:Phone) where size((p)<-[:PTY_Phone]-()) > 2 
+with p match (p)<-[:PTY_Phone]-(pa:Party) where (pa)-[:MULTIPARTY_COOKIE]->(:Cookie) 
+with pa limit 50
+match (c1:Cookie)<-[r:MULTIPARTY_COOKIE]-(pa)-[r1:MULTIPARTY_COOKIE]->(c2:Cookie)
+where id(c1) <> id(c2)
+with pa, c1, c2,r,r1
+match (pa)-[pp:PTY_Phone]->(ph:Phone)
+return c1,c2,r,r1,pa,pp,ph;

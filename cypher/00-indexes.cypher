@@ -7,6 +7,11 @@ CREATE CONSTRAINT ON (x:Phone) ASSERT x.number IS UNIQUE;
 CREATE CONSTRAINT ON (x:SSN) ASSERT x.ssn IS UNIQUE;
 CREATE CONSTRAINT ON (x:Cookie) ASSERT x.id IS UNIQUE;
 
+CREATE INDEX ON :Party(flag);
+CREATE INDEX ON :Cookie(flag);
+CREATE INDEX ON :SSN(flag);
+CREATE INDEX ON :Phone(flag);
+
 CREATE INDEX ON :Party(fraud_followup);
 CREATE INDEX ON :Party(fraud_confirmed);
 CREATE INDEX ON :Party(case_id);
