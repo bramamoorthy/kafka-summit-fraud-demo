@@ -14,6 +14,7 @@ SET
     party.fraud_followup = true,
     party.fraud_confirmed = true,
     party.case_id = apoc.util.md5([party.id]),
-    party.flag = 0
+    party.flag = 0,
+    party.group = $N
 RETURN count(party);
 

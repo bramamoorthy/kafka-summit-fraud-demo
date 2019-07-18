@@ -2,7 +2,7 @@
  * we know are linked to crooks because they share an SSN
  */
 
-MATCH (suspicious:Party)-[:SSN]->(:SSN)<-[:SSN]-(crook:Party { fraud_confirmed: true })
+MATCH (suspicious:Party)-[:SSN]->(:SSN)<-[:SSN]-(crook:Party { fraud_confirmed: true, group: $N })
 WITH distinct(suspicious) as suspicious
 ORDER BY suspicious.occupation ASC LIMIT 50 /* Effectively a random, but reproducible order */
 WITH collect(suspicious) as suspiciousParties
@@ -36,6 +36,8 @@ CREATE (sharedPhone:Phone {
 })
 CREATE (suspicious)-[:PHONE]->(sharedPhone)
 CREATE (innocent)-[:PHONE]->(sharedPhone)
-SET innocent.flag = suspicious.flag + 1
+SET 
+    innocent.flag = suspicious.flag + 1,
+    innocent.group = $N
 RETURN count(sharedPhone);
 

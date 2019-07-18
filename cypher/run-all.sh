@@ -8,9 +8,10 @@ for file in `ls *.cypher` ; do
    cat $file | cypher-shell -a $NEO4J_HOST -u neo4j -p $NEO4J_PASSWORD
 done
 
-# for N in 1 2 3 4 5 do
-#    for file in `ls build-fraud-ring/*.cypher` ; do
-#       echo "RUN $N - $file"
-#       cat $file | cypher-shell -a $NEO4J_HOST -u neoj -p $NEO4J_PASSWORD
-#    done
-# done
+for N in 1 2 3 4 5 ; do
+    for file in `ls build-fraud-ring/*.cypher` ; do
+       echo "RUN $N - $file"
+       export N
+       cat $file | envsubst | cypher-shell -a $NEO4J_HOST -u neo4j -p $NEO4J_PASSWORD
+    done
+ done

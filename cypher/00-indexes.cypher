@@ -7,7 +7,9 @@ CREATE CONSTRAINT ON (x:Phone) ASSERT x.number IS UNIQUE;
 CREATE CONSTRAINT ON (x:SSN) ASSERT x.ssn IS UNIQUE;
 CREATE CONSTRAINT ON (x:Cookie) ASSERT x.id IS UNIQUE;
 
-CREATE INDEX ON :Party(flag);
+/* This causes weird cypher bug in 084-seed-shared-SSNs */
+/* CREATE INDEX ON :Party(flag); */
+
 CREATE INDEX ON :Cookie(flag);
 CREATE INDEX ON :SSN(flag);
 CREATE INDEX ON :Phone(flag);
