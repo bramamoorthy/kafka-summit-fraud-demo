@@ -1,0 +1,69 @@
+type Address {
+   _id: Long!
+   address: String!
+   city: String!
+   id: String!
+   state: String!
+   zip: String!
+   partys: [Party] @relation(name: "ADDRESS", direction: "IN")
+}
+
+type CreditCard {
+   _id: Long!
+   currency: String!
+   full: String!
+   id: String!
+   provider: String!
+   type: String!
+   partys: [Party] @relation(name: "CREDIT_CARD", direction: "IN")
+}
+
+type Account {
+   _id: Long!
+   currency: String!
+   iban: String!
+   id: String!
+   type: String!
+   partys: [Party] @relation(name: "ACCOUNT", direction: "IN")
+}
+
+type SSN {
+   _id: Long!
+   ssn: String!
+   partys: [Party] @relation(name: "SSN", direction: "IN")
+}
+
+type Phone {
+   _id: Long!
+   id: String
+   number: String!
+   partys: [Party] @relation(name: "PHONE", direction: "IN")
+}
+
+type Cookie {
+   _id: Long!
+   cookie: String!
+   cookie_id: String!
+   id: String!
+   ip: String!
+   partys_cookie: [Party] @relation(name: "COOKIE", direction: "IN")
+   partys_multiparty_cookie: [Party] @relation(name: "MULTIPARTY_COOKIE", direction: "IN")
+}
+
+type Party {
+   _id: Long!
+   case_id: String
+   first_name: String
+   fraud_confirmed: Boolean
+   fraud_followup: Boolean
+   id: Int!
+   last_name: String
+   occupation: String
+   address: [Address] @relation(name: "ADDRESS", direction: "OUT")
+   phone: [Phone] @relation(name: "PHONE", direction: "OUT")
+   ssn: [SSN] @relation(name: "SSN", direction: "OUT")
+   credit_card: [CreditCard] @relation(name: "CREDIT_CARD", direction: "OUT")
+   account: [Account] @relation(name: "ACCOUNT", direction: "OUT")
+   cookie: [Cookie] @relation(name: "COOKIE", direction: "OUT")
+   multiparty_cookie: [Cookie] @relation(name: "MULTIPARTY_COOKIE", direction: "OUT")
+}
