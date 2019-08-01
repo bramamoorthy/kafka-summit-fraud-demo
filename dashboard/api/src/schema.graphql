@@ -1,5 +1,4 @@
 type Address {
-   _id: Long!
    address: String!
    city: String!
    id: String!
@@ -9,7 +8,6 @@ type Address {
 }
 
 type CreditCard {
-   _id: Long!
    currency: String!
    full: String!
    id: String!
@@ -19,7 +17,6 @@ type CreditCard {
 }
 
 type Account {
-   _id: Long!
    currency: String!
    iban: String!
    id: String!
@@ -28,30 +25,26 @@ type Account {
 }
 
 type SSN {
-   _id: Long!
    ssn: String!
    partys: [Party] @relation(name: "SSN", direction: "IN")
 }
 
 type Phone {
-   _id: Long!
    id: String
    number: String!
    partys: [Party] @relation(name: "PHONE", direction: "IN")
 }
 
 type Cookie {
-   _id: Long!
    cookie: String!
    cookie_id: String!
    id: String!
    ip: String!
    partys_cookie: [Party] @relation(name: "COOKIE", direction: "IN")
-   partys_multiparty_cookie: [Party] @relation(name: "MULTIPARTY_COOKIE", direction: "IN")
+   multiparty_size: Int @cypher(statement: "RETURN SIZE( (this)<-[:COOKIE]-(:Party) )")
 }
 
 type Party {
-   _id: Long!
    case_id: String
    first_name: String
    fraud_confirmed: Boolean
@@ -59,6 +52,10 @@ type Party {
    id: Int!
    last_name: String
    occupation: String
+   louvainCommunity: Int
+   bloomURL: String @cypher(statement:"""
+   RETURN 'http://67.205.129.81:7474/browser/bloom?perspective=Fraud&search=Associates+of+Sofia%20Pelyo'
+   """)
    address: [Address] @relation(name: "ADDRESS", direction: "OUT")
    phone: [Phone] @relation(name: "PHONE", direction: "OUT")
    ssn: [SSN] @relation(name: "SSN", direction: "OUT")
@@ -66,4 +63,25 @@ type Party {
    account: [Account] @relation(name: "ACCOUNT", direction: "OUT")
    cookie: [Cookie] @relation(name: "COOKIE", direction: "OUT")
    multiparty_cookie: [Cookie] @relation(name: "MULTIPARTY_COOKIE", direction: "OUT")
+   sharedIdentitySize: Int @cypher(statement: """
+   RETURN SIZE( (this)-[:SSN|PHONE|COOKIE]-()-[:SSN|PHONE|COOKIE]-(:Party) )
+   """)
+   sharedIdentity: [Party] @cypher(statement: """
+   MATCH (this)-[:SSN|PHONE|COOKIE]-()-[:SSN|PHONE|COOKIE]-(p2:Party)
+   RETURN p2
+   """)
+}
+
+type Query {
+  getSuspiciousParties: [Party] @cypher(statement:"""
+   MATCH path=(p1:Party)-[:SSN|PHONE|COOKIE]-()-[:SSN|PHONE|COOKIE]-(p2:Party)-[*..2]-()--(:Party)
+   RETURN DISTINCT p1 AS party LIMIT 100
+   """)
+   getFraudRing: [Party] @cypher(statement:"""
+   TODO
+   """)
+   getFraudCommunity(community: Int): [Party] @cypher(statement: """
+   MATCH (p:Party) WHERE p.louvainCommunity = $community
+   RETURN p
+   """)
 }
