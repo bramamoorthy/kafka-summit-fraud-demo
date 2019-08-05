@@ -23,7 +23,8 @@ import {
   People as PeopleIcon
 } from "@material-ui/icons";
 
-import UserList from "./UserList";
+import PartyList from "./PartyList";
+import CaseList from "./CaseList";
 import classNames from "classnames";
 
 const drawerWidth = 240;
@@ -101,7 +102,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedView: "Home",
+      selectedView: "Parties",
       open: true
     };
   }
@@ -178,28 +179,28 @@ class App extends Component {
             <Divider />
             <List>
               <div>
-                <ListItem button onClick={() => this.setSelectedView("Home")}>
+                {/* <ListItem button onClick={() => this.setSelectedView("Home")}>
                   <ListItemIcon>
                     <DashboardIcon />
                   </ListItemIcon>
                   <ListItemText primary="Home" />
-                </ListItem>
+                </ListItem> */}
 
                 <ListItem
                   button
-                  onClick={() => this.setSelectedView("Businesses")}
+                  onClick={() => this.setSelectedView("Cases")}
                 >
                   <ListItemIcon>
                     <EventNoteIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Businesses" />
+                  <ListItemText primary="Cases" />
                 </ListItem>
 
-                <ListItem button onClick={() => this.setSelectedView("Users")}>
+                <ListItem button onClick={() => this.setSelectedView("Parties")}>
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Users" />
+                  <ListItemText primary="Parties" />
                 </ListItem>
               </div>
             </List>
@@ -209,9 +210,9 @@ class App extends Component {
 
             {/* FIXME: Use proper routing here instead  */}
             <Typography component="div" className={classes.chartContainer}>
-              {this.state.selectedView === "Home" ? <UserList /> : null}
-              {this.state.selectedView === "Businesses" ? <div /> : null}
-              {this.state.selectedView === "Users" ? <UserList /> : null}
+              {this.state.selectedView === "Parties" ? <PartyList /> : null}
+              {this.state.selectedView === "Cases" ? <CaseList /> : null}
+              {/* {this.state.selectedView === "Users" ? <UserList /> : null} */}
             </Typography>
           </main>
         </div>

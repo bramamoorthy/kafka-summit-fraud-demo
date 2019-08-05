@@ -1,7 +1,6 @@
 import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import "./UserList.css";
 import { withStyles } from "@material-ui/core/styles";
 import {
   Table,
@@ -18,7 +17,7 @@ import {
 
 const styles = theme => ({
   root: {
-    maxWidth: 700,
+    //maxWidth: 700,
     marginTop: theme.spacing.unit * 3,
     overflowX: "auto",
     margin: "auto"
@@ -77,7 +76,7 @@ class UserList extends React.Component {
     return (
       <Paper className={classes.root}>
         <Typography variant="h2" gutterBottom>
-          User List
+          Party List
         </Typography>
         <TextField
           id="search"
