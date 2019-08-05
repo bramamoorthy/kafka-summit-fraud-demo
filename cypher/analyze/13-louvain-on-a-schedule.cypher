@@ -7,7 +7,10 @@ CALL apoc.periodic.repeat(
             CALL algo.louvain.stream(\'Party\', \'ASSOCIATED\', 
                {concurrency:8, graph:\'heavy\'}) 
             YIELD nodeId, community", 
-        "MATCH (n) where id(n) = nodeId set n.louvainCommunity = community",
+        "
+        MATCH (n) 
+        WHERE id(n) = nodeId 
+        SET n.louvainCommunity = community, n.fraud_followup = true",
         {batchSize:2000, parallel:false}) YIELD batches return batches
     ',
     61)
