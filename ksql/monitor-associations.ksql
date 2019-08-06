@@ -1,0 +1,57 @@
+/* Example record below */
+
+SELECT 
+    PAYLOAD['start']['ids'][0] as from_party_id,
+    PAYLOAD['start']['labels'] as from_types,
+    PAYLOAD['end']['ids'][0] as to_party_id,
+    PAYLOAD['start']['labels'] as to_types,
+    PAYLOAD['label'] as label,
+    PAYLOAD['type'] as entity_type
+FROM ASSOCIATIONS;
+
+/* 
+{
+    "meta": {
+        "operation": "created",
+        "source": {
+            "hostname": "neo4j-kafka-summit"
+        },
+        "timestamp": 1565103191426,
+        "txEventId": 587,
+        "txEventsCount": 590,
+        "txId": 487,
+        "username": "neo4j"
+    },
+    "payload": {
+        "after": {
+            "properties": {}
+        },
+        "before": null,
+        "end": {
+            "id": "259390",
+            "ids": {
+                "id": 99601
+            },
+            "labels": [
+                "Party"
+            ]
+        },
+        "id": "601944",
+        "label": "ASSOCIATED",
+        "start": {
+            "id": "22676",
+            "ids": {
+                "id": 99650
+            },
+            "labels": [
+                "Party"
+            ]
+        },
+        "type": "relationship"
+    },
+    "schema": {
+        "constraints": [],
+        "properties": {}
+    }
+}
+*/
