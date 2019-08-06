@@ -1,13 +1,33 @@
-/* Example record below */
+CREATE STREAM connected_parties 
+  (meta STRUCT<
+    operation VARCHAR,
+    timestamp DOUBLE,
+    txEventId DOUBLE,
+    txId DOUBLE,
+    username VARCHAR
+   >,
+   payload STRUCT<
+    id VARCHAR,
+    label VARCHAR,
+    start STRUCT<
+      id VARCHAR,
+      labels ARRAY<STRING>
+    >,
+    `end` STRUCT<
+      id VARCHAR,
+      labels ARRAY<STRING>
+    >
+   >
+  ) WITH (KAFKA_TOPIC='associations', VALUE_FORMAT='JSON');
 
 SELECT 
-    PAYLOAD['start']['ids'][0] as from_party_id,
-    PAYLOAD['start']['labels'] as from_types,
-    PAYLOAD['end']['ids'][0] as to_party_id,
-    PAYLOAD['start']['labels'] as to_types,
-    PAYLOAD['label'] as label,
-    PAYLOAD['type'] as entity_type
-FROM ASSOCIATIONS;
+    payload->id as id, 
+    payload->label as label,
+    payload->start->id as start_id,
+    payload->start->labels as start_labels,
+    payload->`end`->id as end_id,
+    payload->`end`->labels as end_labels
+FROM connected_parties;
 
 /* 
 {
@@ -55,3 +75,13 @@ FROM ASSOCIATIONS;
     }
 }
 */
+
+
+SELECT 
+    PAYLOAD->start->ids[0] as from_party_id,
+    PAYLOAD['start']['labels'] as from_types,
+    PAYLOAD['end']['ids'][0] as to_party_id,
+    PAYLOAD['start']['labels'] as to_types,
+    PAYLOAD['label'] as label,
+    PAYLOAD['type'] as entity_type
+FROM ASSOCIATIONS;
