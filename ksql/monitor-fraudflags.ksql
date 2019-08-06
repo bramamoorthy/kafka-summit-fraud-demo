@@ -1,4 +1,111 @@
+CREATE STREAM fraud_feed 
+  (meta STRUCT<
+    operation VARCHAR,
+    timestamp DOUBLE,
+    txEventId DOUBLE,
+    txId DOUBLE,
+    username VARCHAR
+   >,
+   payload STRUCT<
+    id VARCHAR,
+    `type` VARCHAR,
+    after STRUCT<
+      labels ARRAY<STRING>,
+      `properties` STRUCT<
+        first_name STRING,
+        last_name STRING,
+        fraud_confirmed BOOLEAN,
+        fraud_followup BOOLEAN,
+        id VARCHAR,
+        louvainCommunity DOUBLE,
+        occupation STRING
+      >
+    >  
+   >
+  ) WITH (KAFKA_TOPIC='fraudflags', VALUE_FORMAT='JSON');
 
 SELECT 
-    PAYLOAD
-FROM FRAUDFLAGS;
+    payload->id as id,
+    payload->`type` as `type`,
+    payload->after->labels as labels,
+    payload->after->`properties`->first_name as first_name,
+    payload->after->`properties`->last_name as last_name,
+    payload->after->`properties`->fraud_confirmed as fraud_confirmed,
+    payload->after->`properties`->fraud_followup as fraud_followup,
+    payload->after->`properties`->id as payload_id,
+    payload->after->`properties`->louvainCommunity as louvainCommunity,
+    payload->after->`properties`->occupation as occupation,
+    meta->operation as operation,
+    meta->timestamp as timestamp,
+    meta->txEventId as txEventId,
+    meta->txId as txId
+FROM fraud_feed
+WHERE payload->after->`properties`->fraud_confirmed OR payload->after->`properties`->fraud_followup;    
+
+
+/* SAMPLE RECORD
+{
+    "meta": {
+        "operation": "updated",
+        "source": {
+            "hostname": "neo4j-kafka-summit"
+        },
+        "timestamp": 1565119324849,
+        "txEventId": 1481,
+        "txEventsCount": 2000,
+        "txId": 503,
+        "username": "neo4j"
+    },
+    "payload": {
+        "after": {
+            "labels": [
+                "Party"
+            ],
+            "properties": {
+                "first_name": "Juan",
+                "fraud_confirmed": false,
+                "fraud_followup": true,
+                "id": 45626,
+                "last_name": "Whitney",
+                "louvainCommunity": 32866,
+                "occupation": "Materials engineer"
+            }
+        },
+        "before": {
+            "labels": [
+                "Party"
+            ],
+            "properties": {
+                "first_name": "Juan",
+                "fraud_confirmed": false,
+                "fraud_followup": false,
+                "id": 45626,
+                "last_name": "Whitney",
+                "occupation": "Materials engineer"
+            }
+        },
+        "id": "236616",
+        "type": "node"
+    },
+    "schema": {
+        "constraints": [
+            {
+                "label": "Party",
+                "properties": [
+                    "id"
+                ],
+                "type": "UNIQUE"
+            }
+        ],
+        "properties": {
+            "first_name": "String",
+            "fraud_confirmed": "Boolean",
+            "fraud_followup": "Boolean",
+            "id": "Long",
+            "last_name": "String",
+            "louvainCommunity": "Long",
+            "occupation": "String"
+        }
+    }
+}
+*/
