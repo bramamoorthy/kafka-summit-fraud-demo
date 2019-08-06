@@ -8,12 +8,22 @@ banking institution.   All of the data is faked by a script, no SSNs or actual n
 * `git submodule sync`
 * `cd fakestream && pipenv install`
 
+## Needed Kafka Topics
+
+Ensure at least the following topics exist:
+
+* cookies
+* fraud-flags
+
 ## Starting Neo4j / Neo4j-Streams
 
 In the `neo4j-streams` subdirectory:
 
 * Create an `.env` file with `KAFKA_BOOTSTRAP_SERVERS`, `CONFLUENT_API_KEY`, `CONFLUENT_API_SECRET` pointing to a Confluent Cloud instance
-* `docker-compose up`
+* `./run.sh`
+
+This will expand the pre-cooked dataset that's populated with base data and
+fraud rings, and start Neo4j with streams enabled.
 
 ## Loading the data
 
