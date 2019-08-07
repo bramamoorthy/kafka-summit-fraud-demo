@@ -1,6 +1,7 @@
 import { typeDefs } from "./graphql-schema";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
+import cors from "cors";
 import { v1 as neo4j } from "neo4j-driver";
 import { makeAugmentedSchema, inferSchema } from "neo4j-graphql-js";
 import dotenv from "dotenv";
@@ -9,6 +10,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
 /*
  * Create an executable GraphQL schema object from GraphQL type definitions
