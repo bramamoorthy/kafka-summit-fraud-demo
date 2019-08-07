@@ -186,17 +186,17 @@ class App extends Component {
                   <ListItemText primary="Home" />
                 </ListItem> */}
 
-                <ListItem
-                  button
-                  onClick={() => this.setSelectedView("Cases")}
-                >
+                <ListItem button onClick={() => this.setSelectedView("Cases")}>
                   <ListItemIcon>
                     <EventNoteIcon />
                   </ListItemIcon>
                   <ListItemText primary="Cases" />
                 </ListItem>
 
-                <ListItem button onClick={() => this.setSelectedView("Parties")}>
+                <ListItem
+                  button
+                  onClick={() => this.setSelectedView("Parties")}
+                >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
@@ -209,11 +209,11 @@ class App extends Component {
             <div className={classes.appBarSpacer} />
 
             {/* FIXME: Use proper routing here instead  */}
-            <Typography component="div" className={classes.chartContainer}>
-              {this.state.selectedView === "Parties" ? <PartyList /> : null}
-              {this.state.selectedView === "Cases" ? <CaseList /> : null}
-              {/* {this.state.selectedView === "Users" ? <UserList /> : null} */}
-            </Typography>
+            {/* <Typography component="div" className={classes.chartContainer}> */}
+            {this.state.selectedView === "Parties" ? <PartyList /> : null}
+            {this.state.selectedView === "Cases" ? <CaseList /> : null}
+            {/* {this.state.selectedView === "Users" ? <UserList /> : null} */}
+            {/* </Typography> */}
           </main>
         </div>
       </React.Fragment>
