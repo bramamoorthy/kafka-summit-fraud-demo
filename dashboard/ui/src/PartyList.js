@@ -108,6 +108,7 @@ class UserList extends React.Component {
               ) {
                 last_name
                 first_name
+                id
                 louvainCommunity
                 occupation
                 sharedIdentitySize
@@ -202,7 +203,7 @@ class UserList extends React.Component {
                       <TableRow key={n.last_name}>
                         <TableCell component="th" scope="row">
                           <a href={n.bloomURL} target="_blank">
-                            {n.first_name +' ' + n.last_name}
+                            {n.first_name + " " + n.last_name}
                           </a>
                         </TableCell>
                         <TableCell numeric>{n.louvainCommunity}</TableCell>

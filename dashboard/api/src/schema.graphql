@@ -54,12 +54,7 @@ type Party {
   last_name: String
   occupation: String
   louvainCommunity: Int
-  bloomURL: String
-    @cypher(
-      statement: """
-      RETURN 'http://67.205.129.81:7474/browser/bloom?perspective=Fraud&search=View+Party+' + this.id
-      """
-    )
+  bloomURL: String @neo4j_ignore
   address: [Address] @relation(name: "ADDRESS", direction: "OUT")
   phone: [Phone] @relation(name: "PHONE", direction: "OUT")
   ssn: [SSN] @relation(name: "SSN", direction: "OUT")
@@ -81,6 +76,11 @@ type Party {
       RETURN p2
       """
     )
+}
+
+type Case {
+   caseId: String
+   bloomURL: String
 }
 
 type Query {
@@ -105,7 +105,7 @@ type Query {
       """
     )
 
-   getAllCases:[String] @cypher(statement: """
-      MATCH (n) WHERE EXISTS(n.case_id) RETURN DISTINCT n.case_id
+   getAllCases:[Case] @cypher(statement: """
+      MATCH (n) WHERE EXISTS(n.case_id) WITH DISTINCT n.case_id AS case_id RETURN {caseId: case_id}
    """)
 }
