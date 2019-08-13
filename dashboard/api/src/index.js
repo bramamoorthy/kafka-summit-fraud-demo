@@ -1,4 +1,5 @@
 import { typeDefs } from "./graphql-schema";
+import { resolvers } from "./resolvers";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import cors from "cors";
@@ -21,7 +22,8 @@ app.use(cors());
  */
 
 const schema = makeAugmentedSchema({
-  typeDefs
+  typeDefs,
+  resolvers
 });
 
 /*
