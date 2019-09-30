@@ -16,6 +16,8 @@ Ensure at least the following topics exist:
 * cookies
 * fraudflags
 
+![](images/create_topic.png)
+
 ## Starting Neo4j / Neo4j-Streams
 
 In the `neo4j-streams` subdirectory:
