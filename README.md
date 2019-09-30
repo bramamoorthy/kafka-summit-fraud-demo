@@ -104,10 +104,14 @@ GraphQL Playground allows you to query the API using GraphQL from a web-browser.
 
 ## Import The Fraud Bloom Perspective
 
+Neo4j Bloom allows an analyst to explore data in Neo4j without writing Cypher queries.
+
 * Open Bloom at `http://localhost:7474/browser/bloom`
 * Select the Settings tab and enable "Experimental features"
 * Select the Experiment Features tab (looks like a beaker)
 * Choose "Import Perspective" and choose `dashboard/bloom/perspective.json`
+
+![](images/bloom.png)
 
 ## Using The Dashboard Frontend
 
