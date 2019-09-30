@@ -13,7 +13,7 @@ banking institution.   All of the data is faked by a script, no SSNs or actual n
 Ensure at least the following topics exist:
 
 * cookies
-* fraud-flags
+* fraudflags
 
 ## Starting Neo4j / Neo4j-Streams
 
@@ -42,6 +42,7 @@ In the `dashboard/api` subdirectory:
 NEO4J_URI=bolt://localhost
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=admin
+BLOOM_BASE_URL=http://localhost:7474/browser/bloom?perspective=Fraud&search=
 ```
 
 * `npm install`
@@ -62,3 +63,15 @@ In the `fakestream` directory:
 * `pipenv run python3 fake.py --topic cookies --template scenarios/financial-fraud/resources/cookie.json --mps 1 -n 10000`
 
 (Alter the "template" argument and "topic" arguments as necessary)
+
+## Querying The GraphQL API
+
+Open a web-browser and navigate to `http://localhost:4001/graphql` to open GraphQL Playground
+
+## Using The Dashboard Frontend
+
+Open a web-browser and navigate to `http://localhost:3000`
+
+### Import The Fraud Bloom Perspective
+
+Import the Bloom perspective found in `dashboard/bloom/perspective.json` by enabling experimental features in Bloom.
