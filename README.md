@@ -5,7 +5,8 @@ banking institution.   All of the data is faked by a script, no SSNs or actual n
 
 ## Setup
 
-* `git submodule sync`
+* `git submodule init`
+* `git submodule update`
 * `cd fakestream && pipenv install`
 
 ## Needed Kafka Topics
@@ -60,18 +61,79 @@ In the `dashboard/ui` subdirectory:
 
 In the `fakestream` directory:
 
+* `export KAFKA_BOOTSTRAP_SERVERS=<your Kafka bootstrap servers here>`
+* `export CONFLUENT_API_KEY=<your Confluent API key here>`
+* `export CONFLUENT_API_SECRET=<your Confluent API secret here>`
 * `pipenv run python3 fake.py --topic cookies --template scenarios/financial-fraud/resources/cookie.json --mps 1 -n 10000`
 
 (Alter the "template" argument and "topic" arguments as necessary)
 
 ## Querying The GraphQL API
 
-Open a web-browser and navigate to `http://localhost:4001/graphql` to open GraphQL Playground
+GraphQL Playground allows you to query the API using GraphQL from a web-browser. Open a web-browser and navigate to `http://localhost:4001/graphql` to open GraphQL Playground. You should see something like this:
+
+![](images/graphql_playground.png)
+
+### Interesting GraphQL Queries
+
+*Find an unadjudicated case*
+
+```GraphQL
+{
+  Party(
+    filter: { case_id_not: "", 
+              fraud_followup: true, 
+              fraud_confirmed: true }
+    first: 1
+  ) {
+    last_name
+    sharedIdentitySize
+    sharedIdentity {
+      last_name
+      address {
+        address
+      }
+      account {
+        iban
+        currency
+      }
+    }
+  }
+}
+```
+
+## Import The Fraud Bloom Perspective
+
+* Open Bloom at `http://localhost:7474/browser/bloom`
+* Select the Settings tab and enable "Experimental features"
+* Select the Experiment Features tab (looks like a beaker)
+* Choose "Import Perspective" and choose `dashboard/bloom/perspective.json`
 
 ## Using The Dashboard Frontend
 
-Open a web-browser and navigate to `http://localhost:3000`
+The dashboard web application allows fraud analysts to investigate potentially fraudulent cases and parties and adjudicate the case using graph visualization. 
 
-### Import The Fraud Bloom Perspective
+Open a web-browser and navigate to `http://localhost:3000`. You should see something like this:
 
-Import the Bloom perspective found in `dashboard/bloom/perspective.json` by enabling experimental features in Bloom.
+![](images/dashboard.png)
+
+## Interesting Cypher Queries
+
+*Find parties with overlapping bits of identity*
+
+```cypher
+MATCH path=(p1:Party)-[:SSN|PHONE|COOKIE]-()-[:SSN|PHONE|COOKIE]-(p2:Party)
+RETURN path LIMIT 10
+```
+
+![](images/neo4j_browser_1.png)
+
+
+*Find Fraud Rings*
+
+```cypher
+MATCH path=(p1:Party)-[:SSN|PHONE|COOKIE]-()-[:SSN|PHONE|COOKIE]-(p2:Party)-[*..2]-()--(:Party)
+RETURN path LIMIT 100
+```
+
+![](images/neo4j_browser_2.png)
