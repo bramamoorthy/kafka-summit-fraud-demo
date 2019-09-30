@@ -35,6 +35,8 @@ In the `cypher` subdirectory:
 Use `run-all.sh` - edit the URL and password for the Neo4j connection and just run the script.  This 
 will load a default dataset and create some sample fraud rings.
 
+*Note: This script makes use of `cypher-shell` and assumes it is on your PATH. You can download and install `cypher-shell` from the [Neo4j Download Center](https://neo4j.com/download-center/).*
+
 ## Starting the Back-End
 
 In the `dashboard/api` subdirectory:
