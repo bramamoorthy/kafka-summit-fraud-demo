@@ -123,6 +123,12 @@ The dashboard web application allows fraud analysts to investigate potentially f
 
 Open a web-browser and navigate to `http://localhost:3000`. You should see something like this:
 
+*View parties assigned to cases, including number of overlapping nodes*
+
+![](images/dashboard1.png)
+
+*View cases and adjudicate with use of graph visualization*
+
 ![](images/dashboard.png)
 
 ## Interesting Cypher Queries
