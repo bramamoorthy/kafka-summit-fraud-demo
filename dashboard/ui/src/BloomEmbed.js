@@ -13,7 +13,7 @@ class BloomEmbed extends React.Component {
     return (
       <iframe
         id="inlineFrameExample"
-        title="Inline Frame Example"
+        title="Bloom Embed"
         width="100%"
         height="100%"
         src={this.props.bloomURL}

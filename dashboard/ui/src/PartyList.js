@@ -113,6 +113,8 @@ class UserList extends React.Component {
                 occupation
                 sharedIdentitySize
                 bloomURL
+                fraud_confirmed
+                fraud_followup
               }
             }
           `}
@@ -145,10 +147,76 @@ class UserList extends React.Component {
                           direction={order}
                           onClick={() => this.handleSortRequest("last_name")}
                         >
-                          Last Name
+                          Name
                         </TableSortLabel>
                       </Tooltip>
                     </TableCell>
+
+                    <TableCell
+                      key="occupation"
+                      sortDirection={orderBy === "occupation" ? order : false}
+                    >
+                      <Tooltip
+                        title="Sort"
+                        placement="bottom-start"
+                        enterDelay={300}
+                      >
+                        <TableSortLabel
+                          active={orderBy === "occupation"}
+                          direction={order}
+                          onClick={() => this.handleSortRequest("occupation")}
+                        >
+                          Occupation
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+
+                    <TableCell
+                      key="fraud_confirmed"
+                      sortDirection={
+                        orderBy === "fraud_confirmed" ? order : false
+                      }
+                    >
+                      <Tooltip
+                        title="Sort"
+                        placement="bottom-start"
+                        enterDelay={300}
+                      >
+                        <TableSortLabel
+                          active={orderBy === "fraud_confirmed"}
+                          direction={order}
+                          onClick={() =>
+                            this.handleSortRequest("fraud_confirmed")
+                          }
+                        >
+                          Fraud Confirmed
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+
+                    <TableCell
+                      key="fraudFollowup"
+                      sortDirection={
+                        orderBy === "fraudFollowup" ? order : false
+                      }
+                    >
+                      <Tooltip
+                        title="Sort"
+                        placement="bottom-start"
+                        enterDelay={300}
+                      >
+                        <TableSortLabel
+                          active={orderBy === "fraudFollowup"}
+                          direction={order}
+                          onClick={() =>
+                            this.handleSortRequest("fraudFollowup")
+                          }
+                        >
+                          Fraud Followup
+                        </TableSortLabel>
+                      </Tooltip>
+                    </TableCell>
+
                     <TableCell
                       key="louvainCommunity"
                       sortDirection={
@@ -200,12 +268,15 @@ class UserList extends React.Component {
                 <TableBody>
                   {data.Party.map(n => {
                     return (
-                      <TableRow key={n.last_name}>
+                      <TableRow key={n.id}>
                         <TableCell component="th" scope="row">
                           <a href={n.bloomURL} target="_blank">
                             {n.first_name + " " + n.last_name}
                           </a>
                         </TableCell>
+                        <TableCell>{n.occupation}</TableCell>
+                        <TableCell>{String(n.fraud_confirmed)}</TableCell>
+                        <TableCell>{String(n.fraud_followup)}</TableCell>
                         <TableCell numeric>{n.louvainCommunity}</TableCell>
                         <TableCell numeric>{n.sharedIdentitySize}</TableCell>
                       </TableRow>

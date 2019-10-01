@@ -157,7 +157,7 @@ class App extends Component {
                 noWrap
                 className={classes.title}
               >
-                Welcome To GRANDstack
+                Fraud Analytics With GRANDstack
               </Typography>
             </Toolbar>
           </AppBar>
