@@ -12,7 +12,10 @@ import {
   Paper,
   TableSortLabel,
   Typography,
-  TextField
+  TextField,
+  Button,
+  Menu,
+  MenuItem
 } from "@material-ui/core";
 
 const styles = theme => ({
@@ -41,9 +44,20 @@ class UserList extends React.Component {
       orderBy: "last_name",
       page: 0,
       rowsPerPage: 10,
-      usernameFilter: ""
+      usernameFilter: "",
+      anchorEl: null
     };
   }
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = event => {
+    console.log(event.target.bloomURL);
+
+    this.setState({ anchorEl: null });
+  };
 
   handleSortRequest = property => {
     const orderBy = property;
@@ -58,8 +72,8 @@ class UserList extends React.Component {
 
   getFilter = () => {
     return this.state.usernameFilter.length > 0
-      ? { last_name_contains: this.state.usernameFilter }
-      : {};
+      ? { last_name_contains: this.state.usernameFilter, case_id_not: "" }
+      : { case_id_not: "" };
   };
 
   handleFilterChange = filterName => event => {
@@ -113,8 +127,10 @@ class UserList extends React.Component {
                 occupation
                 sharedIdentitySize
                 bloomURL
+                caseBloomURL
                 fraud_confirmed
                 fraud_followup
+                case_id
               }
             }
           `}
@@ -172,56 +188,8 @@ class UserList extends React.Component {
                     </TableCell>
 
                     <TableCell
-                      key="fraud_confirmed"
-                      sortDirection={
-                        orderBy === "fraud_confirmed" ? order : false
-                      }
-                    >
-                      <Tooltip
-                        title="Sort"
-                        placement="bottom-start"
-                        enterDelay={300}
-                      >
-                        <TableSortLabel
-                          active={orderBy === "fraud_confirmed"}
-                          direction={order}
-                          onClick={() =>
-                            this.handleSortRequest("fraud_confirmed")
-                          }
-                        >
-                          Fraud Confirmed
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-
-                    <TableCell
-                      key="fraudFollowup"
-                      sortDirection={
-                        orderBy === "fraudFollowup" ? order : false
-                      }
-                    >
-                      <Tooltip
-                        title="Sort"
-                        placement="bottom-start"
-                        enterDelay={300}
-                      >
-                        <TableSortLabel
-                          active={orderBy === "fraudFollowup"}
-                          direction={order}
-                          onClick={() =>
-                            this.handleSortRequest("fraudFollowup")
-                          }
-                        >
-                          Fraud Followup
-                        </TableSortLabel>
-                      </Tooltip>
-                    </TableCell>
-
-                    <TableCell
-                      key="louvainCommunity"
-                      sortDirection={
-                        orderBy === "louvainCommunity" ? order : false
-                      }
+                      key="case_id"
+                      sortDirection={orderBy === "case_id" ? order : false}
                       numeric
                     >
                       <Tooltip
@@ -230,16 +198,15 @@ class UserList extends React.Component {
                         enterDelay={300}
                       >
                         <TableSortLabel
-                          active={orderBy === "louvainCommunity"}
+                          active={orderBy === "case_id"}
                           direction={order}
-                          onClick={() =>
-                            this.handleSortRequest("louvainCommunity")
-                          }
+                          onClick={() => this.handleSortRequest("case_id")}
                         >
-                          Louvain Community
+                          Case ID
                         </TableSortLabel>
                       </Tooltip>
                     </TableCell>
+                    <TableCell>Adjudicate Case</TableCell>
                     <TableCell
                       key="sharedIdentitySize"
                       sortDirection={
@@ -275,9 +242,37 @@ class UserList extends React.Component {
                           </a>
                         </TableCell>
                         <TableCell>{n.occupation}</TableCell>
-                        <TableCell>{String(n.fraud_confirmed)}</TableCell>
-                        <TableCell>{String(n.fraud_followup)}</TableCell>
-                        <TableCell numeric>{n.louvainCommunity}</TableCell>
+                        <TableCell>
+                          <a href={n.caseBloomURL} target="_blank">
+                            {n.case_id}
+                          </a>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <Button
+                              aria-controls="simple-menu"
+                              aria-haspopup="true"
+                              onClick={this.handleClick}
+                              className={classes.menuButton}
+                            >
+                              Adjudicate
+                            </Button>
+                            <Menu
+                              id="simple-menu"
+                              anchorEl={this.state.anchorEl}
+                              keepMounted
+                              open={Boolean(this.state.anchorEl)}
+                              onClose={this.handleClose}
+                            >
+                              <MenuItem onClick={this.handleClose}>
+                                Fraud
+                              </MenuItem>
+                              <MenuItem onClick={this.handleClose}>
+                                Not Fraud
+                              </MenuItem>
+                            </Menu>
+                          </div>
+                        </TableCell>
                         <TableCell numeric>{n.sharedIdentitySize}</TableCell>
                       </TableRow>
                     );

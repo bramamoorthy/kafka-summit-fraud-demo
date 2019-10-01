@@ -4,6 +4,9 @@ export const resolvers = {
     Party: {
         bloomURL: (object, params, ctx, resolveInfo) => {
             return `${process.env.BLOOM_BASE_URL}View+Party+${object.id}`;
+        },
+        caseBloomURL: (object, params, ctx, resolveInfo) => {
+            return `${process.env.BLOOM_BASE_URL}View+Case+${object.case_id}`
         }
     },
     Case: {

@@ -55,6 +55,7 @@ type Party {
   occupation: String
   louvainCommunity: Int
   bloomURL: String @neo4j_ignore
+  caseBloomURL: String @neo4j_ignore
   address: [Address] @relation(name: "ADDRESS", direction: "OUT")
   phone: [Phone] @relation(name: "PHONE", direction: "OUT")
   ssn: [SSN] @relation(name: "SSN", direction: "OUT")
