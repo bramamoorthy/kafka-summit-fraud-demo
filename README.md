@@ -23,6 +23,7 @@ Ensure at least the following topics exist:
 In the `neo4j-streams` subdirectory:
 
 * Create an `.env` file with `KAFKA_BOOTSTRAP_SERVERS`, `CONFLUENT_API_KEY`, `CONFLUENT_API_SECRET` pointing to a Confluent Cloud instance
+* If you have one, save your Bloom license file to `neo4j-streams/data/bloom.license` (optional)
 * `./run.sh`
 
 This will expand the pre-cooked dataset that's populated with base data and
